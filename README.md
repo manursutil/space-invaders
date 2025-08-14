@@ -9,6 +9,7 @@ A tiny Space-Invaders-style game built with plain HTML5 Canvas + JavaScript.
 - Player and invader projectiles
 - Particle effects (stars + explosions)
 - Score display
+- **Level progression** – Beat all invaders to advance to faster, harder levels
 - **Leaderboard system** - Track top 10 high scores locally
 - **Persistent high scores** - Scores saved between sessions
 - **Game over screen** - Clean restart functionality
@@ -17,9 +18,23 @@ A tiny Space-Invaders-style game built with plain HTML5 Canvas + JavaScript.
 
 ## Controls
 
-- **A**: move left
-- **D**: move right
+- **A** or **←**: move left
+- **D** or **→**: move right
 - **Space**: shoot
+
+## Levels
+
+The game now features multiple levels.
+
+Each new level increases:
+
+- Invader movement speed
+- Invader projectile speed
+- Spawn frequency of invader grids
+
+“Next Level” message and sound play when you clear all invaders.
+
+Progress is tracked on-screen via the Level display.
 
 ## Audio
 
