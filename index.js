@@ -114,6 +114,17 @@ class Player {
       this.width,
       this.height
     );
+
+    if (shieldActive) {
+      c.beginPath();
+      c.arc(0, 0, Math.max(this.width, this.height) * 0.7, 0, Math.PI * 2);
+      c.strokeStyle = "cyan";
+      c.lineWidth = 3;
+      c.globalAlpha = 0.9;
+      c.stroke();
+      c.globalAlpha = this.opacity;
+    }
+
     c.restore();
   }
 
@@ -302,11 +313,35 @@ class Grid {
   }
 }
 
+class PowerUp {
+  constructor({ position, type }) {
+    (this.position = position),
+      (this.width = 20),
+      (this.height = 20),
+      (this.type = type);
+    this.velocity = {
+      x: 0,
+      y: 2,
+    };
+  }
+
+  draw() {
+    c.fillStyle = this.type === "shield" ? "cyan" : "gold";
+    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+
+  update() {
+    this.position.y += this.velocity.y;
+    this.draw();
+  }
+}
+
 const player = new Player();
 const projectiles = [];
 const grids = [];
 const invaderProjectiles = [];
 const particles = [];
+const powerUps = [];
 
 const keys = {
   a: { pressed: false },
@@ -322,6 +357,46 @@ let level = 1;
 
 let levelHasSpawned = false;
 let nextLevelTimer = null;
+
+// Power-Ups
+let shieldActive = false;
+let shieldTimer = null;
+let bonusActive = false;
+let bonusTimer = null;
+
+function showPowerUpShield() {
+  const el = document.getElementById("shield");
+  el.style.display = "block";
+  setTimeout(() => {
+    el.style.display = "none";
+  }, 2000);
+}
+
+function showPowerUpMultiplier() {
+  const el = document.getElementById("ptsMultiplier");
+  el.style.display = "block";
+  setTimeout(() => {
+    el.style.display = "none";
+  }, 2000);
+}
+
+function activateShield() {
+  clearTimeout(shieldTimer);
+  shieldActive = true;
+  showPowerUpShield();
+  shieldTimer = setTimeout(() => {
+    shieldActive = false;
+  }, 5000);
+}
+
+function activateBonus() {
+  clearTimeout(bonusTimer);
+  bonusActive = true;
+  showPowerUpMultiplier();
+  bonusTimer = setTimeout(() => {
+    bonusActive = false;
+  }, 5000);
+}
 
 // Victory detection and level progression
 function checkVictory() {
@@ -354,13 +429,19 @@ function playVictorySound() {
 
 function showNextLevelScreen() {
   document.getElementById("nextLevel").style.display = "block";
+  document.getElementById("nextLevelPoints").style.display = "block";
 }
 
 function hideNextLevelScreen() {
   document.getElementById("nextLevel").style.display = "none";
+  document.getElementById("nextLevelPoints").style.display = "none";
 }
 
 function nextLevel() {
+  const bonus = 500 * level;
+  score += bonus;
+  scoreEl.innerHTML = score;
+
   level++;
   levelEl.innerHTML = level;
   hideNextLevelScreen();
@@ -516,6 +597,14 @@ function animate() {
         player.position.x &&
       invaderProjectile.position.x <= player.position.x + player.width
     ) {
+      if (shieldActive) {
+        setTimeout(() => {
+          invaderProjectiles.splice(index, 1);
+        }, 0);
+        createParticles({ object: player, color: "cyan", fades: true });
+        return;
+      }
+
       setTimeout(() => {
         invaderProjectiles.splice(index, 1);
         player.opacity = 0;
@@ -585,7 +674,10 @@ function animate() {
             );
 
             if (invaderFound && projectileFound) {
-              score += 100;
+              let points = 100;
+              if (bonusActive) points *= 2;
+
+              score += points;
               scoreEl.innerHTML = score;
 
               createParticles({
@@ -608,11 +700,53 @@ function animate() {
               } else {
                 grids.splice(gridIndex, 1);
               }
+
+              // --- POWER-UP DROP ---
+              if (Math.random() < 0.03) {
+                const type = Math.random() < 0.5 ? "shield" : "points";
+                powerUps.push(
+                  new PowerUp({
+                    position: {
+                      x: invader.position.x + invader.width / 2 - 10,
+                      y: invader.position.y,
+                    },
+                    type,
+                  })
+                );
+              }
             }
           }, 0);
         }
       });
     });
+  });
+
+  // POWER-UPS: update, cull, and collect
+  powerUps.forEach((p, i) => {
+    p.update();
+
+    // remove if off-screen
+    if (p.position.y > GAME_HEIGHT) {
+      setTimeout(() => powerUps.splice(i, 1), 0);
+      return;
+    }
+
+    // AABB collision with player
+    if (
+      p.position.x < player.position.x + player.width &&
+      p.position.x + p.width > player.position.x &&
+      p.position.y < player.position.y + player.height &&
+      p.position.y + p.height > player.position.y
+    ) {
+      if (p.type === "shield") {
+        activateShield();
+        createParticles({ object: player, color: "cyan", fades: true });
+      } else if (p.type === "points") {
+        activateBonus();
+        createParticles({ object: player, color: "gold", fades: true });
+      }
+      setTimeout(() => powerUps.splice(i, 1), 0);
+    }
   });
 
   // Check for victory condition
