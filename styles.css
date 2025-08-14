@@ -21,6 +21,28 @@ body {
   position: absolute;
   inset: 0;
   display: block;
+  z-index: 0;
+}
+
+.score-display,
+.level-display,
+.leaderboard,
+.save-score-ui,
+.start-btn,
+.game-over-text,
+.next-level-text,
+.game-over-btn {
+  position: absolute;
+  z-index: 10;
+}
+
+.score-display {
+  left: 10px;
+  top: 10px;
+}
+.level-display {
+  right: 10px;
+  top: 10px;
 }
 
 /* Keyframe Animations */

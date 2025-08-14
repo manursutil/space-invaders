@@ -14,7 +14,6 @@
     <div id="game">
       <canvas id="gameCanvas"></canvas>
 
-      <!-- Audio -->
       <audio
         src="./audio/bgMusic.mp3"
         type="audio/mpeg"
@@ -29,18 +28,15 @@
       ></audio>
       <audio src="./audio/victory.mp3" type="audio/mpeg" id="victory"></audio>
 
-      <!-- HUD -->
       <p class="score-display">Score: <span id="scoreEl">0</span></p>
       <p class="level-display">Level: <span id="levelEl">0</span></p>
 
-      <!-- Leaderboard -->
       <div id="leaderboard" class="leaderboard">
         <div class="leaderboard-title">LEADERBOARD (Top 10):</div>
         <ol id="leaderboardList" class="leaderboard-list"></ol>
         <button id="clearLB" class="clear-lb-btn">CLEAR LB</button>
       </div>
 
-      <!-- Save Score UI -->
       <div id="saveBackdrop" class="save-backdrop"></div>
       <div id="saveScoreUI" class="save-score-ui">
         <div class="final-score-display">
@@ -51,7 +47,6 @@
         <button id="saveScoreBtn" class="save-score-btn">SAVE SCORE</button>
       </div>
 
-      <!-- Start / Game Over -->
       <button id="start" class="start-btn">START GAME</button>
       <p id="gameOver" class="game-over-text">GAME OVER</p>
       <p id="nextLevel" class="next-level-text">NEXT LEVEL</p>
