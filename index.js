@@ -7,6 +7,48 @@ const GAME_HEIGHT = 576;
 
 let viewport = { scale: 1, offsetX: 0, offsetY: 0 };
 
+const LB_KEY = "space_invaders_leaderboard_v1";
+
+function getLeaderboard() {
+  try {
+    return JSON.parse(localStorage.getItem(LB_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function setLeaderboard(list) {
+  localStorage.setItem(LB_KEY, JSON.stringify(list));
+}
+
+function addScore(name, score) {
+  const list = getLeaderboard();
+
+  list.push({
+    name: name?.trim() || "???",
+    score,
+    at: new Date().toISOString(),
+  });
+
+  list.sort((a, b) => b.score - a.score);
+  setLeaderboard(list.slice(0, 10));
+}
+
+function renderLeaderboard() {
+  const list = getLeaderboard();
+  const ol = document.getElementById("leaderboardList");
+  if (!ol) return;
+  ol.innerHTML = "";
+  list.forEach((row, idx) => {
+    const li = document.createElement("li");
+    li.textContent = `${row.name} — ${row.score}`;
+    li.style.marginBottom = "2px";
+    ol.appendChild(li);
+  });
+}
+
+renderLeaderboard();
+
 function updateViewport() {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -312,6 +354,15 @@ function createParticles({ object, color, fades }) {
 function showGameOver() {
   document.getElementById("gameOver").style.display = "block";
   document.getElementById("gameOverBtn").style.display = "block";
+  document.getElementById("leaderboard").style.display = "block";
+
+  document.getElementById("finalScore").textContent = score;
+  document.getElementById("saveScoreUI").style.display = "block";
+  document.getElementById("saveBackdrop").style.display = "block";
+
+  const nameEl = document.getElementById("playerName");
+  nameEl.value = "";
+  nameEl.focus();
 }
 
 function animate() {
@@ -528,6 +579,7 @@ animate();
 
 document.getElementById("start").addEventListener("click", () => {
   document.getElementById("start").style.display = "none";
+  document.getElementById("leaderboard").style.display = "none";
 
   score = 0;
   scoreEl.innerHTML = score;
@@ -541,6 +593,24 @@ document.getElementById("start").addEventListener("click", () => {
   music.currentTime = 0;
   music.play().catch((err) => console.warn("Autoplay blocked:", err));
   music.volume = 0.5;
+});
+
+document.getElementById("saveScoreBtn").addEventListener("click", () => {
+  const name = document.getElementById("playerName").value || "Player";
+  addScore(name, score);
+  renderLeaderboard();
+
+  document.getElementById("saveScoreUI").style.display = "none";
+  document.getElementById("saveBackdrop").style.display = "none";
+});
+
+document.getElementById("playerName").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("saveScoreBtn").click();
+});
+
+document.getElementById("clearLB")?.addEventListener("click", () => {
+  localStorage.removeItem(LB_KEY);
+  renderLeaderboard();
 });
 
 addEventListener("keydown", (e) => {
