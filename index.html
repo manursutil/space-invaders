@@ -1,14 +1,119 @@
+<audio src="./audio/bgMusic.mp3" type="audio/mpeg" id="backgroundMusic"></audio>
+<audio src="./audio/laser.mp3" type="audio/mpeg" id="laser"></audio>
+<audio src="./audio/explosion.mp3" type="audio/mpeg" id="explosion"></audio>
+
 <style>
   body {
     margin: 0;
   }
+
+  @keyframes flash {
+    0%,
+    100% {
+      background-color: black;
+      color: yellow;
+      text-shadow: 0 0 5px yellow, 0 0 10px black;
+    }
+    50% {
+      background-color: yellow;
+      color: black;
+      text-shadow: 0 0 5px black, 0 0 10px yellow;
+    }
+  }
+
+  #start,
+  #gameOverBtn {
+    animation: flash 1s infinite;
+  }
 </style>
 
 <p
- style="position: fixed; z-index: 10; color: white; left: 10px; top: 10px; margin: 0; font-family: sans-serif; font-size: 14px;"
+  style="
+    position: fixed;
+    z-index: 10;
+    color: lime;
+    left: 10px;
+    top: 10px;
+    margin: 0;
+    font-family: 'Press Start 2P', monospace; /* retro pixel font */
+    font-size: 14px;
+    text-shadow: 0 0 5px lime, 0 0 10px black;
+  "
 >
-    <span>Score: <span id="scoreEl">0</span>
+  Score: <span id="scoreEl">0</span>
 </p>
+
+<button
+  id="start"
+  style="
+    display: block;
+    position: fixed;
+    z-index: 10;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: yellow;
+    background-color: black;
+    border: 3px solid yellow;
+    cursor: pointer;
+    text-shadow: 0 0 5px yellow, 0 0 10px black;
+  "
+  onclick="document.getElementById('backgroundMusic').play()"
+>
+  START GAME
+</button>
+
+<p
+  id="gameOver"
+  style="
+    display: none;
+    position: fixed;
+    z-index: 10;
+    color: red;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 40px;
+    text-shadow: 0 0 5px red, 0 0 15px black;
+  "
+>
+  GAME OVER
+</p>
+
+<button
+  id="gameOverBtn"
+  onclick="window.location.href='index.html'"
+  style="
+    display: none;
+    position: fixed;
+    z-index: 10;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: yellow;
+    background-color: black;
+    border: 3px solid yellow;
+    cursor: pointer;
+    text-shadow: 0 0 5px yellow, 0 0 10px black;
+  "
+  onmouseover="this.style.backgroundColor='yellow'; this.style.color='black';"
+  onmouseout="this.style.backgroundColor='black'; this.style.color='yellow';"
+>
+  RETRY
+</button>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  rel="stylesheet"
+/>
 
 <canvas></canvas>
 <script src="./index.js"></script>

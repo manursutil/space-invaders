@@ -271,7 +271,7 @@ const keys = {
 
 let frames = 0;
 let randomInterval = Math.floor(Math.random() * 500 + 500);
-let game = { over: false, active: true };
+let game = { over: false, active: false };
 let score = 0;
 
 // background particles
@@ -309,8 +309,45 @@ function createParticles({ object, color, fades }) {
   }
 }
 
+function showGameOver() {
+  document.getElementById("gameOver").style.display = "block";
+  document.getElementById("gameOverBtn").style.display = "block";
+}
+
 function animate() {
-  if (!game.active) return;
+  if (!game.active) {
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.fillStyle = "black";
+    c.fillRect(0, 0, canvas.width, canvas.height);
+
+    c.setTransform(
+      viewport.scale,
+      0,
+      0,
+      viewport.scale,
+      viewport.offsetX,
+      viewport.offsetY
+    );
+
+    particles.forEach((p) => {
+      p.update();
+      if (p.position.y - p.radius >= GAME_HEIGHT) {
+        p.position.x = Math.random() * GAME_WIDTH;
+        p.position.y = -p.radius;
+      }
+    });
+
+    if (player.image) {
+      player.draw();
+    } else {
+      c.fillStyle = "white";
+      c.fillRect(GAME_WIDTH / 2 - 10, GAME_HEIGHT - 40, 20, 20);
+    }
+
+    requestAnimationFrame(animate);
+    return;
+  }
+
   requestAnimationFrame(animate);
 
   c.setTransform(1, 0, 0, 1, 0, 0);
@@ -370,11 +407,17 @@ function animate() {
         invaderProjectiles.splice(index, 1);
         player.opacity = 0;
         game.over = true;
+
+        const music = document.getElementById("explosion");
+        music.currentTime = 0;
+        music.play().catch((err) => console.warn("Autoplay blocked:", err));
+        music.volume = 5.0;
       }, 0);
 
       setTimeout(() => {
         game.active = false;
-      }, 2000);
+        showGameOver();
+      }, 1000);
 
       createParticles({
         object: player,
@@ -480,10 +523,28 @@ function animate() {
 
   frames++;
 }
+
 animate();
 
+document.getElementById("start").addEventListener("click", () => {
+  document.getElementById("start").style.display = "none";
+
+  score = 0;
+  scoreEl.innerHTML = score;
+  game.over = false;
+  game.active = true;
+  grids.length = 0;
+  invaderProjectiles.length = 0;
+  projectiles.length = 0;
+
+  const music = document.getElementById("backgroundMusic");
+  music.currentTime = 0;
+  music.play().catch((err) => console.warn("Autoplay blocked:", err));
+  music.volume = 0.5;
+});
+
 addEventListener("keydown", (e) => {
-  if (game.over) return;
+  if (game.over || !game.active) return;
 
   const { key } = e;
   switch (key) {
@@ -506,11 +567,16 @@ addEventListener("keydown", (e) => {
           velocity: { x: 0, y: -10 },
         })
       );
+      const music = document.getElementById("laser");
+      music.currentTime = 0;
+      music.play().catch((err) => console.warn("Autoplay blocked:", err));
+      music.volume = 0.25;
       break;
   }
 });
 
 addEventListener("keyup", (e) => {
+  if (!game.active) return;
   const { key } = e;
   switch (key) {
     case "a":
