@@ -51,6 +51,18 @@ body {
   text-shadow: 0 0 5px lime, 0 0 10px black;
 }
 
+.level-display {
+  position: fixed;
+  z-index: 10;
+  color: cyan;
+  right: 10px;
+  top: 10px;
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px;
+  text-shadow: 0 0 5px cyan, 0 0 10px black;
+}
+
 /* Leaderboard Styles */
 .leaderboard {
   display: block;
@@ -156,6 +168,21 @@ body {
 }
 
 /* Game Over Elements */
+.next-level-text {
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  color: lime;
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: 40px;
+  text-shadow: 0 0 5px lime, 0 0 15px black;
+  display: none;
+  animation: flash-green 1s infinite;
+}
+
 .game-over-text {
   position: fixed;
   top: 35%;

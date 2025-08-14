@@ -1,4 +1,5 @@
 const scoreEl = document.querySelector("#scoreEl");
+const levelEl = document.querySelector("#levelEl");
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
@@ -249,13 +250,14 @@ class Invader {
   }
 
   shoot(invaderProjectiles) {
+    const projectileSpeed = Math.min(5 + (level - 1) * 0.5, 8);
     invaderProjectiles.push(
       new InvaderProjectile({
         position: {
           x: this.position.x + this.width / 2,
           y: this.position.y + this.height,
         },
-        velocity: { x: 0, y: 5 },
+        velocity: { x: 0, y: projectileSpeed },
       })
     );
   }
@@ -264,7 +266,8 @@ class Invader {
 class Grid {
   constructor() {
     this.position = { x: 0, y: 0 };
-    this.velocity = { x: 3, y: 0 };
+    const baseSpeed = 3 + (level - 1) * 0.5;
+    this.velocity = { x: baseSpeed, y: 0 };
     this.invaders = [];
 
     const columns = Math.floor(Math.random() * 10 + 5);
@@ -315,6 +318,65 @@ let frames = 0;
 let randomInterval = Math.floor(Math.random() * 500 + 500);
 let game = { over: false, active: false };
 let score = 0;
+let level = 1;
+
+let levelHasSpawned = false;
+let nextLevelTimer = null;
+
+// Victory detection and level progression
+function checkVictory() {
+  if (!game.active || game.over || !levelHasSpawned) return;
+
+  const totalInvaders = grids.reduce(
+    (total, grid) => total + grid.invaders.length,
+    0
+  );
+
+  if (totalInvaders === 0 && grids.length === 0) {
+    if (nextLevelTimer) return;
+    playVictorySound();
+    showNextLevelScreen();
+    nextLevelTimer = setTimeout(() => {
+      nextLevelTimer = null;
+      nextLevel();
+    }, 2000);
+  }
+}
+
+function playVictorySound() {
+  const music = document.getElementById("victory");
+  if (music) {
+    music.currentTime = 0;
+    music.play().catch((err) => console.warn("Victory sound failed:", err));
+    music.volume = 0.7;
+  }
+}
+
+function showNextLevelScreen() {
+  document.getElementById("nextLevel").style.display = "block";
+}
+
+function hideNextLevelScreen() {
+  document.getElementById("nextLevel").style.display = "none";
+}
+
+function nextLevel() {
+  level++;
+  levelEl.innerHTML = level;
+  hideNextLevelScreen();
+
+  // Reset for next level
+  frames = 1;
+  randomInterval = Math.max(
+    200,
+    Math.floor(Math.random() * 500 + 500) - level * 50
+  ); // Shorter intervals between spawns
+
+  // Spawn first grid of new level immediately
+  grids.length = 0;
+  grids.push(new Grid());
+  levelHasSpawned = true;
+}
 
 // background particles
 for (let i = 0; i < 100; i++) {
@@ -493,7 +555,9 @@ function animate() {
   grids.forEach((grid, gridIndex) => {
     grid.update();
 
-    if (frames % 100 === 0 && grid.invaders.length > 0) {
+    // More frequent shooting based on level
+    const shootingFrequency = Math.max(50, 100 - level * 10);
+    if (frames % shootingFrequency === 0 && grid.invaders.length > 0) {
       grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(
         invaderProjectiles
       );
@@ -551,6 +615,9 @@ function animate() {
     });
   });
 
+  // Check for victory condition
+  checkVictory();
+
   // player movement
   if (keys.a.pressed && !keys.d.pressed) {
     player.velocity.x = -5;
@@ -569,7 +636,10 @@ function animate() {
   if (frames % randomInterval === 0) {
     grids.push(new Grid());
     frames = 0;
-    randomInterval = Math.floor(Math.random() * 500 + 500);
+    randomInterval = Math.max(
+      200,
+      Math.floor(Math.random() * 500 + 500) - level * 50
+    );
   }
 
   frames++;
@@ -582,12 +652,26 @@ document.getElementById("start").addEventListener("click", () => {
   document.getElementById("leaderboard").style.display = "none";
 
   score = 0;
+  level = 1;
   scoreEl.innerHTML = score;
+  levelEl.innerHTML = level;
+  hideNextLevelScreen();
   game.over = false;
   game.active = true;
+
   grids.length = 0;
   invaderProjectiles.length = 0;
   projectiles.length = 0;
+
+  player.opacity = 1;
+
+  frames = 1;
+  randomInterval = Math.max(
+    200,
+    Math.floor(Math.random() * 500 + 500) - level * 50
+  );
+  grids.push(new Grid());
+  levelHasSpawned = true;
 
   const music = document.getElementById("backgroundMusic");
   music.currentTime = 0;
