@@ -203,6 +203,62 @@ body {
   animation: flash 1s infinite;
 }
 
+/* Controls Hint */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.keycap {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 0 2px;
+  border: 2px solid yellow;
+  border-radius: 4px;
+  background: black;
+  font-size: 10px;
+  min-width: 20px;
+  text-align: center;
+  animation: float 1.5s ease-in-out infinite;
+}
+
+.keycap:nth-child(odd) {
+  animation-delay: 0.2s;
+}
+.keycap:nth-child(even) {
+  animation-delay: 0.4s;
+}
+
+.controls-hint {
+  display: block;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px;
+  color: yellow;
+  text-align: center;
+  z-index: 15;
+  text-shadow: 0 0 5px yellow, 0 0 10px black;
+}
+
+.control {
+  margin: 10px 0;
+}
+
+.action {
+  margin-left: 6px;
+  animation: float 1.5s ease-in-out infinite;
+}
+
 /* Game Over Elements */
 .next-level-text {
   position: fixed;

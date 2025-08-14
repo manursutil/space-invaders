@@ -650,6 +650,7 @@ animate();
 document.getElementById("start").addEventListener("click", () => {
   document.getElementById("start").style.display = "none";
   document.getElementById("leaderboard").style.display = "none";
+  document.getElementById("controlsHint").style.display = "none";
 
   score = 0;
   level = 1;
