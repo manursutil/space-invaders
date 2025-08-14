@@ -832,6 +832,8 @@ document.getElementById("clearLB")?.addEventListener("click", () => {
   renderLeaderboard();
 });
 
+let canShoot = true;
+
 addEventListener("keydown", (e) => {
   if (game.over || !game.active) return;
 
@@ -846,6 +848,12 @@ addEventListener("keydown", (e) => {
       keys.d.pressed = true;
       break;
     case " ":
+      if (!canShoot) return;
+      canShoot = false;
+      setTimeout(() => {
+        canShoot = true;
+      }, 100);
+
       keys.space.pressed = true;
       projectiles.push(
         new Projectile({
