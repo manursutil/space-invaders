@@ -1,26 +1,34 @@
 # Space Invaders
 
-A tiny Space-Invaders-style game built with plain HTML5 Canvas + JavaScript.
+A fully playable Space Invaders–style game built from scratch with HTML5 Canvas + Vanilla JavaScript, featuring levels, power-ups, audio effects, and a persistent leaderboard.
 
 ## Features
 
-- Player ship with smooth movement and tilt
-- Invader grids that bounce and descend
-- Player and invader projectiles
-- Particle effects (stars + explosions)
-- Score display
-- **Level progression** – Beat all invaders to advance to faster, harder levels
-- **Leaderboard system** - Track top 10 high scores locally
-- **Persistent high scores** - Scores saved between sessions
-- **Game over screen** - Clean restart functionality
-- **Audio effects** - Background music, laser sounds, and explosions
-- Consistent experience via 16:9 world scaling
+- Smooth Player Controls – Responsive left/right movement & shooting
+- Invader AI – Bouncing, descending grids that shoot back
+- Dynamic Background – Parallax starfield particles for retro atmosphere
+- Explosions & Effects – Particles, tilts, and animated impacts
+- Scoring & Levels – Points increase with level difficulty
+- Power-Ups – Shields & bonus points with timed effects
+- Leaderboard – Persistent top 10 high scores via LocalStorage
+- Immersive Audio – Background music + laser & explosion SFX
+- Responsive 16:9 Scaling – Consistent experience on any screen
 
 ## Controls
 
 - **A** or **←**: move left
 - **D** or **→**: move right
 - **Space**: shoot
+
+💡 Tip: Power-ups spawn occasionally—grab them for shields or bonus points!
+
+## Screenshots
+
+![Gameplay Screenshot 1](./img/screenshot1.png)
+
+![Gameplay Screenshot 2](./img/screenshot2.png)
+
+![Gameplay Screenshot 3](./img/screenshot3.png)
 
 ## Levels
 
@@ -53,7 +61,14 @@ The game includes immersive audio effects:
 
 ## Getting Started
 
-1. Clone the repo. The folder structure should look like this:
+1. Clone the repo.
+
+```bash
+git clone https://github.com/manursutil/space-invaders.git
+cd space-invaders
+```
+
+The folder structure should look like this:
 
 ```bash
 .
@@ -63,7 +78,8 @@ The game includes immersive audio effects:
 ├─ audio/
 │  ├─ bgMusic.mp3
 │  ├─ laser.mp3
-│  └─ explosion.mp3
+│  ├─ explosion.mp3
+│  └─ victory.mp3
 └─ img/
    ├─ spaceship.png
    └─ invader.png
@@ -74,13 +90,12 @@ The game includes immersive audio effects:
    - Use Live Server extension in VS Code
    - Open `index.html` directly in browser (file://)
 
-## Game Over
+## Tech Stack
 
-When your ship is destroyed:
-
-- Final score is displayed
-- Option to save your score to the leaderboard
-- Quick restart with the RETRY button
+- HTML5 Canvas – Rendering & animations
+- Vanilla JavaScript – Game logic & mechanics
+- CSS3 – UI styling & animations
+- LocalStorage – Persistent leaderboard
 
 ## Technical Notes
 
